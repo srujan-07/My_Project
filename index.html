@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Detector and Runner</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            overflow: hidden; /* Prevents scrolling */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1; /* Ensure it is behind other content */
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            animation: fadeIn 3s ease-in-out;
+        }
+
+        textarea {
+            width: 80%;
+            height: 200px;
+            margin-bottom: 20px;
+            font-family: monospace;
+            font-size: 16px;
+            border: 2px solid #fff;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            animation: float 5s infinite alternate;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 10px;
+            background-color: #1e90ff;
+            color: #fff;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+
+        button:hover {
+            background-color: #63b8ff;
+        }
+
+        #result, #output {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        #result {
+            color: green;
+            animation: fadeIn 3s ease-in-out;
+        }
+
+        #output {
+            color: blue;
+            white-space: pre-wrap; /* Ensure output is formatted correctly */
+            animation: fadeIn 3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-20px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+
+<body>
+    <video class="video-bg" autoplay muted loop>
+        <source src="Space.mp4" type="video/mp4"> Your browser does not support the video tag.
+    </video>
+
+    <h1>Language Detector and Runner</h1>
+    <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
+    <div>
+        <button onclick="detectAndRunCode()">Run Code</button>
+    </div>
+    <div id="result"></div>
+    <div id="output"></div>
+
+    <script>
+        async function detectAndRunCode() {
+            const code = document.getElementById('codeInput').value;
+            const resultDiv = document.getElementById('result');
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = ""; // Clear previous output
+
+            try {
+                const response = await fetch('http://localhost:3000/execute_code', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+
+                if (data.error) {
+                    resultDiv.innerText = `Error: ${data.error}`;
+                    outputDiv.innerText = '';
+                } else {
+                    resultDiv.innerText = `Detected Language: ${data.detectedLanguage}`;
+                    outputDiv.innerText = data.output.Result || 'No output';
+                }
+            } catch (error) {
+                resultDiv.innerText = `Error detecting or executing code: ${error.message}`;
+                outputDiv.innerText = '';
+            }
+        }
+    </script>
+</body>
+
+</html>

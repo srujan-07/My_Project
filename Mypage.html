@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Language Detector</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery library -->
+<script>
+    $(document).ready(function() {
+        $("#detectButton").click(function() {
+            var code = $("#codeInput").val(); // Get code input from textarea
+            $.post("http://127.0.0.1:5000/detect_language", { code: code }, function(data) {
+                $("#output").text("Detected language: " + data.detected_language); // Display detected language
+            });
+        });
+    });
+</script>
+</head>
+<body>
+<div>
+    <h1>Code Language Detector</h1>
+    <form id="codeForm">
+        <label for="codeInput">Enter your code:</label><br>
+        <textarea id="codeInput" name="code" rows="10" cols="50"></textarea><br>
+        <button id="detectButton" type="button">Detect Language</button>
+    </form>
+    <div id="output"></div> <!-- Output area to display detected language -->
+</div>
+</body>
+</html>

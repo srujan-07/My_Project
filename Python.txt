@@ -1,0 +1,17 @@
+print
+import
+def
+class
+if
+elif
+else
+for
+while
+try
+except
+finally
+return
+lambda
+with
+yield
+assert

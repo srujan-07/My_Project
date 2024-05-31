@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Detector and Runner</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Amatic+SC:400,700');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: black;
+            overflow: hidden;
+        }
+
+        .background video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, white, transparent);
+            animation: moveStars 30s linear infinite;
+        }
+
+        @keyframes moveStars {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(-1000px);
+            }
+        }
+
+        @keyframes squiggly-anim {
+            0% {
+                filter: url('#squiggly-0');
+            }
+            25% {
+                filter: url('#squiggly-1');
+            }
+            50% {
+                filter: url('#squiggly-2');
+            }
+            75% {
+                filter: url('#squiggly-3');
+            }
+            100% {
+                filter: url('#squiggly-4');
+            }
+        }
+
+        .squiggly {
+            animation: squiggly-anim 0.34s linear infinite;
+        }
+
+        h1 {
+            font-family: 'Amatic SC', sans-serif;
+            font-size: 100px;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeIn 2s ease-in-out, hover 3s ease-in-out infinite alternate;
+            line-height: 1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes hover {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(-20px);
+            }
+        }
+
+        .code-box {
+            width: 60%;
+            padding: 20px;
+            border: 2px solid white;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 3s ease-in-out;
+        }
+
+        .code-box:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transition: background 0.3s ease;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            resize: none;
+            outline: none;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            background: #444;
+            color: white;
+            border: 2px solid white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background: #666;
+            transform: scale(1.1);
+        }
+
+        button:active {
+            background: #888;
+        }
+
+        /* Scramble button styles */
+        .encrypt-button {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #505050;
+            background: #333;
+            color: #ccc;
+            padding: 10px 20px;
+            font-family: monospace;
+            font-weight: 500;
+            text-transform: uppercase;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .encrypt-button:hover {
+            color: #b3b3ff;
+        }
+
+        .encrypt-button:hover .hover-bg {
+            opacity: 1;
+            animation: moveHoverBg 1s infinite alternate;
+        }
+
+        .encrypt-button .hover-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(0deg, rgba(139,92,246,0) 40%, rgba(139,92,246,1) 50%, rgba(139,92,246,0) 60%);
+            transition: opacity 0.3s;
+            opacity: 0;
+            transform: scale(1.25);
+            z-index: -1;
+        }
+
+        @keyframes moveHoverBg {
+            0% {
+                transform: translateY(100%);
+            }
+            100% {
+                transform: translateY(-100%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <video autoplay muted loop>
+            <source src="Myp.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="stars"></div>
+    </div>
+    <h1 class="squiggly">Language Detector and Runner</h1>
+    <div class="code-box">
+        <textarea placeholder="Paste your code here..."></textarea>
+        <button class="encrypt-button">
+            <span class="icon">🔒</span>
+            <span class="text">Run Code</span>
+            <span class="hover-bg"></span>
+        </button>
+    </div>
+
+    <svg width="0" height="0">
+        <defs>
+            <filter id="squiggly-0">
+                <feTurbulence baseFrequency="0.02" numOctaves="3" result="noise" seed="0"/>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="6"/>
+            </filter>
+            <filter id="squiggly-1">
+                <feTurbulence baseFrequency="0.02" numOctaves="3" result="noise" seed="1"/>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="8"/>
+            </filter>
+            <filter id="squiggly-2">
+                <feTurbulence baseFrequency="0.02" numOctaves="3" result="noise" seed="2"/>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="6"/>
+            </filter>
+            <filter id="squiggly-3">
+                <feTurbulence baseFrequency="0.02" numOctaves="3" result="noise" seed="3"/>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="8"/>
+            </filter>
+            <filter id="squiggly-4">
+                <feTurbulence baseFrequency="0.02" numOctaves="3" result="noise" seed="4"/>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="6"/>
+            </filter>
+        </defs>
+    </svg>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const TARGET_TEXT = "Run Code";
+            const CYCLES_PER_LETTER = 2;
+            const SHUFFLE_TIME = 50;
+            const CHARS = "!@#$%^&*():{};|,.<>/?";
+
+            const button = document.querySelector('.encrypt-button');
+            const textSpan = button.querySelector('.text');
+            let intervalId = null;
+
+            const scramble = () => {
+                let pos = 0;
+
+                intervalId = setInterval(() => {
+                    const scrambled = TARGET_TEXT.split("")
+                        .map((char, index) => {
+                            if (pos / CYCLES_PER_LETTER > index) {
+                                return char;
+                            }
+
+                            const randomCharIndex = Math.floor(Math.random() * CHARS.length);
+                            const randomChar = CHARS[randomCharIndex];
+
+                            return randomChar;
+                        })
+                        .join("");
+
+                    textSpan.textContent = scrambled;
+                    pos++;
+
+                    if (pos >= TARGET_TEXT.length * CYCLES_PER_LETTER) {
+                        stopScramble();
+                    }
+                }, SHUFFLE_TIME);
+            };
+
+            const stopScramble = () => {
+                clearInterval(intervalId);
+                textSpan.textContent = TARGET_TEXT;
+            };
+
+            button.addEventListener('mouseenter', scramble);
+            button.addEventListener('mouseleave', stopScramble);
+        });
+    </script>
+</body>
+</html>
